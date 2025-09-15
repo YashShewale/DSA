@@ -1,0 +1,4 @@
+Generally there are 2 ways :(DFS & BFS)
+--> main note here is that when we use stack in bfs and call dfs throught recursion by passing arguments 
+
+- so then we have to just pass parent with node also So we will not backtrack again
