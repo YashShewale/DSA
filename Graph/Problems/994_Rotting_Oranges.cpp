@@ -1,55 +1,71 @@
-#include<iostream>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
+
+//not MY code But it's optimal : (my approach i wrote in notebook)
+
+class Solution
+{
 public:
-    int orangesRotting(vector<vector<int>>& grid) {
-        int m = grid.size();
-        int n = grid[0].size();
-        vector<vector<int>> visited = grid;
-        //making queue in which we will fill rotten oranges
-        queue<pair<int, int>> q;
-        int countFreshOrange = 0;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (visited[i][j] == 2) {
-                    q.push({i, j});
-                }
-                if (visited[i][j] == 1) {
-                    countFreshOrange++;
-                }
-            }
-        }
-        //q.empty() means there is no rotten orange in the grid and countFreshOrange = 0 means we will rotten the freshoranges in 0 mins
-        if (countFreshOrange == 0)
-            return 0;
-        if (q.empty())
-            return -1;
-        
-        int minutes = -1;
-        // we will cover four directions i.e. up, down, left, right
-        vector<pair<int, int>> dirs = {{1, 0},{-1, 0},{0, -1},{0, 1}};
-        while (!q.empty()) {
-            int size = q.size();
-            while (size--) {
-                auto [x, y] = q.front();
-                q.pop();
-                for (auto [dx, dy] : dirs) {
-                    int i = x + dx;
-                    int j = y + dy;
-                    if (i >= 0 && i < m && j >= 0 && j < n && visited[i][j] == 1) {
-                        visited[i][j] = 2;
-                        countFreshOrange--;
-                        q.push({i, j});
+    int wordLadderLength(string startWord, string targetWord,
+                         vector<string> &wordList)
+    {
+    // Creating a queue ds of type {word,transitions to reach ‘word’}.
+        queue<pair<string, int>> q;
+
+        // BFS traversal with pushing values in queue 
+        // when after a transformation, a word is found in wordList.
+        q.push({startWord, 1});
+
+        // Push all values of wordList into a set
+        // to make deletion from it easier and in less time complexity.
+        unordered_set<string> st(wordList.begin(), wordList.end());
+        st.erase(startWord);
+        while (!q.empty())
+        {
+            string word = q.front().first;
+            int steps = q.front().second;
+            q.pop();
+
+            // we return the steps as soon as
+            // the first occurence of targetWord is found.
+            if (word == targetWord)
+                return steps;
+
+            for (int i = 0; i < word.size(); i++)
+            {
+                // Now, replace each character of ‘word’ with char
+                // from a-z then check if ‘word’ exists in wordList.
+                char original = word[i];
+                for (char ch = 'a'; ch <= 'z'; ch++)
+                {
+                    word[i] = ch;
+                    // check if it exists in the set and push it in the queue.
+                    if (st.find(word) != st.end())
+                    {
+                        st.erase(word);
+                        q.push({word, steps + 1});
                     }
                 }
+                word[i] = original;
             }
-            minutes++;
         }
-        
-        if (countFreshOrange == 0)
-            return minutes;
-        return -1;
+        // If there is no transformation sequence possible
+        return 0;
     }
 };
+ 
+int main()
+{
+ 
+    vector<string> wordList = {"des", "der", "dfr", "dgt", "dfs"};
+    string startWord = "der", targetWord = "dfs";
+ 
+    Solution obj;
+ 
+    int ans = obj.wordLadderLength(startWord, targetWord, wordList);
+ 
+    cout << ans;
+    cout << endl;
+    return 0;
+}
