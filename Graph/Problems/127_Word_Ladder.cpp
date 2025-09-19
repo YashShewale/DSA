@@ -1,52 +1,68 @@
-#include<iostream>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
-
-#define ll long long
-int main(){
-    
-    return 0;
-}
-    
-class Solution {
+ 
+class Solution
+{
 public:
-    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        unordered_set<string> dict(wordList.begin(), wordList.end()), head, tail, *phead, *ptail;
-        if (dict.find(endWord) == dict.end()) {
-            return 0;
-        }
-        head.insert(beginWord);
-        tail.insert(endWord);
-        int ladder = 2;
-        while (!head.empty() && !tail.empty()) {
-            if (head.size() < tail.size()) {
-                phead = &head;
-                ptail = &tail;
-            } else {
-                phead = &tail;
-                ptail = &head;
-            }
-            unordered_set<string> temp;
-            for (auto it = phead -> begin(); it != phead -> end(); it++) {    
-                string word = *it;
-                for (int i = 0; i < word.size(); i++) {
-                    char t = word[i];
-                    for (int j = 0; j < 26; j++) {
-                        word[i] = 'a' + j;
-                        if (ptail -> find(word) != ptail -> end()) {
-                            return ladder;
-                        }
-                        if (dict.find(word) != dict.end()) {
-                            temp.insert(word);
-                            dict.erase(word);
-                        }
+    int wordLadderLength(string startWord, string targetWord,
+                         vector<string> &wordList)
+    {
+    // Creating a queue ds of type {word,transitions to reach ‘word’}.
+        queue<pair<string, int>> q;
+
+        // BFS traversal with pushing values in queue 
+        // when after a transformation, a word is found in wordList.
+        q.push({startWord, 1});
+
+        // Push all values of wordList into a set
+        // to make deletion from it easier and in less time complexity.
+        unordered_set<string> st(wordList.begin(), wordList.end());
+        st.erase(startWord);
+        while (!q.empty())
+        {
+            string word = q.front().first;
+            int steps = q.front().second;
+            q.pop();
+
+            // we return the steps as soon as
+            // the first occurence of targetWord is found.
+            if (word == targetWord)
+                return steps;
+
+            for (int i = 0; i < word.size(); i++)
+            {
+                // Now, replace each character of ‘word’ with char
+                // from a-z then check if ‘word’ exists in wordList.
+                char original = word[i];
+                for (char ch = 'a'; ch <= 'z'; ch++)
+                {
+                    word[i] = ch;
+                    // check if it exists in the set and push it in the queue.
+                    if (st.find(word) != st.end())
+                    {
+                        st.erase(word);
+                        q.push({word, steps + 1});
                     }
-                    word[i] = t;
                 }
+                word[i] = original;
             }
-            ladder++;
-            phead -> swap(temp);
         }
+        // If there is no transformation sequence possible
         return 0;
     }
 };
+ 
+int main()
+{
+ 
+    vector<string> wordList = {"des", "der", "dfr", "dgt", "dfs"};
+    string startWord = "der", targetWord = "dfs";
+ 
+    Solution obj;
+ 
+    int ans = obj.wordLadderLength(startWord, targetWord, wordList);
+ 
+    cout << ans;
+    cout << endl;
+    return 0;
+}
