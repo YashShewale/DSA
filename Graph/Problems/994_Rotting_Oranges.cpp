@@ -33,6 +33,8 @@ public:
         while (!q.empty()) {
             int size = q.size();
             while (size--) {
+
+//------------------------------------------THIS IS USEFUL SO WE CAN EASILY RETRIEVE ELEMENTS
                 auto [x, y] = q.front();
                 q.pop();
                 for (auto [dx, dy] : dirs) {
